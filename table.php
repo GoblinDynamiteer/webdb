@@ -17,7 +17,7 @@ function generate_table($sort='none')
 function generate_table_header()
 {
     $table_header_titles = get_table_titles();
-    $header_string = "<table>\r\n<tr>";
+    $header_string = "<table>\r\n<tr class=\"tableheader\">";
     foreach ($table_header_titles as $title)
     {
         $t = "\r\n<th><a href=\"index.php?sort=" . strtolower($title) .
