@@ -8,18 +8,20 @@
 
         private $_db;
 
+        /* Load json db */
         private function _load_db()
         {
-            echo "Loading";
             $json_string = file_get_contents("db.json");
             $this->_db = json_decode($json_string, true);
         }
 
+        /* Get all keys (movies) */
         public function keys()
         {
             return array_keys($this->_db);
         }
 
+        /* Get specific data */
         function data($mov, $key)
         {
             if(array_key_exists($mov, $this->_db))
@@ -30,21 +32,16 @@
             return "-";
         }
 
+        /* Get specific omdb data */
         function omdb_data($mov, $key)
         {
             if(array_key_exists($mov, $this->_db))
             {
+                // FIXME: Build check for key-exists: omdb
                 $m = $this->_db[$mov]['omdb'];
                 return array_key_exists($key, $m) ? $m[$key] : "-";
             }
             return "-";
         }
     }
-
-
-
-
-
-
-
 ?>
