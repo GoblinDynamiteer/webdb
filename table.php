@@ -39,15 +39,15 @@ function generate_table_row($col_data)
 
 function generate_table_data()
 {
-    $data = load_db();
+    $db = new mov_db();
     $ret = "";
-    foreach ($data as $mov)
+    foreach ($db->keys() as $mov)
     {
         $ret .= generate_table_row(array(
-            $mov['letter'],
-            $mov['omdb']['Title'],
-            $mov['folder'],
-            $mov['omdb']['Year'])
+            $db->data($mov, "letter"),
+            $db->omdb_data($mov, "Title"),
+            $db->data($mov, "folder"),
+            $db->omdb_data($mov, "Year"),)
         );
     }
     return $ret;
