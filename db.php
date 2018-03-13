@@ -28,6 +28,10 @@
             {
                 usort($this->_db, array($this, "_sort_by_year"));
             }
+            if($sort == "added")
+            {
+                usort($this->_db, array($this, "_sort_by_added"));
+            }
         }
 
         private function _sort_by_year($a, $b)
@@ -45,6 +49,11 @@
             }
 
             return strnatcmp($ystring_a, $ystring_b);
+        }
+
+        private function _sort_by_added($a, $b)
+        {
+            return strnatcmp($a['date_scanned'], $b['date_scanned']);
         }
 
         /* Get specific data */

@@ -10,7 +10,7 @@ class html_generator
 
     function __construct()
     {
-        $this->_titles = array("Title", "Year", "Letter", "Folder");
+        $this->_titles = array("Title", "Year", "Letter", "Folder", "Added");
         $this->_mov_db = new mov_db();
         $this->asc_desc_sort = true;
     }
@@ -55,11 +55,14 @@ class html_generator
         $ret = "";
         foreach ($this->_mov_db->keys() as $mov)
         {
+            $date = DateTime::createFromFormat('j M Y',
+                $this->_mov_db->data($mov, "date_scanned"));
             $ret .= $this->_generate_table_row(array(
                 $this->_mov_db->omdb_data($mov, "Title"),
                 $this->_mov_db->omdb_data($mov, "Year"),
                 $this->_mov_db->data($mov, "letter"),
-                $this->_mov_db->data($mov, "folder")
+                $this->_mov_db->data($mov, "folder"), // Added
+                $date->format('Y-m-d')
             ));
         }
         return $ret;
