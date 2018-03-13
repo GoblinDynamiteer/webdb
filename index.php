@@ -11,13 +11,15 @@ $hmtl_gen = new html_generator();
         <title><?php echo $hmtl_gen->title(); ?></title>
     </head>
     <body>
+        <a href="index.php?sort=added&limit=25">Newest 25</a><br>
         <table>
             <tr class="tableheader">
                 <?php echo $hmtl_gen->table_header(); ?>
             </tr>
             <?php
                 $sort = isset($_GET['sort']) ? $_GET['sort'] : "";
-                echo $hmtl_gen->table_data($sort); ?>
+                $limit = isset($_GET['limit']) ? $_GET['limit'] : "";
+                echo $hmtl_gen->table_data($sort, $limit); ?>
         </table>
     </body>
 </html>

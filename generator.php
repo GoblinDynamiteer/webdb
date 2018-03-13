@@ -29,7 +29,7 @@ class html_generator
         foreach ($this->_titles as $title)
         {
             $t = "\r\n<th><a href=\"index.php?sort=" . strtolower($title) .
-                "\"&order=\"" . $order .
+                "&order=" . $order .
                 "\">{$title}</a></th>";
             $header_string .= $t;
         }
@@ -48,9 +48,11 @@ class html_generator
         return $ret . "\r\n</tr>";
     }
 
-    public function table_data($sort)
+    public function table_data($sort, $limit)
     {
         echo "sort:" . $sort;
+        echo "<br>limit:" . $limit;
+        $count = 0;
         $this->_mov_db->sort_by($sort);
         $ret = "";
         foreach ($this->_mov_db->keys() as $mov)
@@ -64,6 +66,12 @@ class html_generator
                 $this->_mov_db->data($mov, "folder"), // Added
                 $date->format('Y-m-d')
             ));
+
+            $count++;
+            if($limit != "" && $count > intval($limit))
+            {
+                break;
+            }
         }
         return $ret;
     }

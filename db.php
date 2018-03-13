@@ -53,7 +53,10 @@
 
         private function _sort_by_added($a, $b)
         {
-            return strnatcmp($a['date_scanned'], $b['date_scanned']);
+            $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
+            $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
+            return ($adate < $bdate);
+            //return strcmp($a['date_scanned'], $b['date_scanned']);
         }
 
         /* Get specific data */
