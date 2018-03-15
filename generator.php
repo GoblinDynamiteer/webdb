@@ -37,6 +37,16 @@ class html_generator
 
         return $header_string;
     }
+    
+    public function page_nav_footer($page)
+    {
+        $footer_string = "";
+        $prev = intval($page) == 0 ? 0 : intval($page) - 1;
+        $footer_string = "<a href=\"index.php?limit=25&page=" . (string)$prev . "\">PREV</a>";
+        $footer_string .= " PAGE " . $page . " ";
+        $footer_string .= "<a href=\"index.php?limit=25&page=" . (string)(1 + intval($page)) . "\">NEXT</a>";
+        return $footer_string;
+    }
 
     private function _generate_table_row($col_data)
     {
@@ -48,27 +58,31 @@ class html_generator
         return $ret . "\r\n</tr>";
     }
 
-    public function table_data($sort, $limit)
+    public function table_data($sort, $limit, $page)
     {
-        echo "sort:" . $sort;
-        echo "<br>limit:" . $limit;
         $count = 0;
+        $start_at = intval($page) * intval($limit);
         $this->_mov_db->sort_by($sort);
+        
         $ret = "";
         foreach ($this->_mov_db->keys() as $mov)
         {
-            $date = DateTime::createFromFormat('j M Y',
-                $this->_mov_db->data($mov, "date_scanned"));
-            $ret .= $this->_generate_table_row(array(
-                $this->_mov_db->omdb_data($mov, "Title"),
-                $this->_mov_db->omdb_data($mov, "Year"),
-                $this->_mov_db->data($mov, "letter"),
-                $this->_mov_db->data($mov, "folder"), // Added
-                $date->format('Y-m-d')
-            ));
-
+            if($count >= $start_at)
+            {
+                $date = DateTime::createFromFormat('j M Y',
+                    $this->_mov_db->data($mov, "date_scanned"));
+                $ret .= $this->_generate_table_row(array(
+                    $this->_mov_db->omdb_data($mov, "Title"),
+                    $this->_mov_db->omdb_data($mov, "Year"),
+                    $this->_mov_db->data($mov, "letter"),
+                    $this->_mov_db->data($mov, "folder"), // Added
+                    $date->format('Y-m-d')
+                ));
+            }
+            
             $count++;
-            if($limit != "" && $count > intval($limit))
+            
+            if($limit != "" && $count > $start_at + intval($limit))
             {
                 break;
             }

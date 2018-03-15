@@ -1,20 +1,92 @@
+nav, 
+header, 
+footer {
+    display: block;
+}
 
-tr:nth-child(even) {background-color: #f2f2f2;}
-tr:hover td {background:lightblue}
+header h1 {
+    display: block;
+    padding-top: : 5px;
+    padding-bottom: : 5px;
+    margin: auto;
+    font-family: 'Mina', sans-serif;
+    color: white;
+    background-color: darkcyan;
+    clear: left;
+    text-align: center;
+}
+
+footer {
+    display: block;
+    padding-top: : 5px;
+    padding-bottom: : 5px;
+    margin: auto;
+    font-family: 'Mina', sans-serif;
+    color: white;
+    background-color: darkcyan;
+    clear: left;
+    text-align: center;
+}
+
+nav {
+    width: 100%;
+    margin: 0;
+}
+
+nav ul {
+    background-color: cadetblue;
+    overflow: hidden; /* Hide if doesnt fit */
+    margin: 0;
+    padding: 0;
+}
+
+nav ul.topnav li {
+    list-style: none; /* Guarantee no bullet points */
+    float: left;
+}
+
+nav ul.topnav li a {
+    min-height: 16px;
+    font-size: 20px;
+    font-family: 'Mina', sans-serif;
+    text-decoration: none;
+    font-weight: bolder;
+    padding-right: 20px;
+    padding-left: 5px;
+    color: white;
+}
+
+nav ul.topnav li a:hover {
+    background-color: white;
+    color: black;
+}
 
 th {
     padding-left: 5px;
     padding-right: 5px;
 }
 
-.tableheader {
-    text-align: left;
-    background-color: darkcyan;
+table {
+    width: 100%;
+    margin: auto;
+    border: 0px;
 }
 
-.tableheader a:link, a:visited, a:active {
+tr:nth-child(even) {background-color: #f2f2f2;}
+tr:hover td {background:lightblue}
+
+tr.tableheader {
+    text-align: left;
+    background-color: darkcyan;
+    font-size: 20px;
+}
+
+tr.tableheader a:link, a:visited {
+    font-family: 'Mina', sans-serif;
     color: white;
     text-decoration: none;
-    font-size: 20px;
-    font-family: 'Mina', sans-serif;
+}
+
+tr.tableheader a:active {
+    color: black;
 }
