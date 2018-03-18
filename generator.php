@@ -10,7 +10,7 @@ class html_generator
 
     function __construct()
     {
-        $this->_titles = array("Title", "Year", "Letter", "Folder", "Added");
+        $this->_titles = array("Title", "Year", "Letter", "Folder", "Imdb", "Added");
         $this->_mov_db = new mov_db();
         $this->asc_desc_sort = true;
     }
@@ -53,7 +53,16 @@ class html_generator
         $ret = "\r\n<tr>";
         foreach ($col_data as $data)
         {
-            $ret .= "\r\n<td>{$data}</td>";
+            $imdb_pattern = "/^tt[0-9]{1,}$/";
+            if(preg_match($imdb_pattern, $data))
+            {
+                $link = "http://www.imdb.com/title/" . $data;
+                $ret .= "\r\n<td><a href=\"" . $link . "\">" . $data . "</a></td>";
+            }
+            else
+            {
+                $ret .= "\r\n<td>{$data}</td>";    
+            }
         }
         return $ret . "\r\n</tr>";
     }
@@ -76,6 +85,7 @@ class html_generator
                     $this->_mov_db->omdb_data($mov, "Year"),
                     $this->_mov_db->data($mov, "letter"),
                     $this->_mov_db->data($mov, "folder"), // Added
+                    $this->_mov_db->data($mov, "imdb"),
                     $date->format('Y-m-d')
                 ));
             }
