@@ -11,7 +11,7 @@
         /* Load json db */
         private function _load_db()
         {
-            $json_string = file_get_contents("db.json");
+            $json_string = file_get_contents("dbmov.json");
             $this->_db = json_decode($json_string, true);
         }
 
