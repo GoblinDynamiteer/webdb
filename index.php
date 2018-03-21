@@ -7,7 +7,8 @@
         isset($_GET['order']) ? $_GET['order'] : "asc",
         isset($_GET['limit']) ? $_GET['limit'] : "25",
         isset($_GET['page']) ? $_GET['page'] : "0",
-        isset($_GET['extend_info']) ? $_GET['extend_info'] : "");
+        isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
+        isset($_GET['search']) ? $_GET['search'] : "");
  ?>
 <html>
     <head>
@@ -25,6 +26,11 @@
                 <li><a href="index.php?sort=title&limit=25">All</a><br></li>
                 <li><a href="index.php?sort=added&limit=25">Newest</a><br></li>
                 <li><a href="index.php?sort=added&limit=25">Year: 2018</a><br></li>
+                <li>
+                    <form name="form" action="" method="get">
+                        <input type="text" name="search" value="">
+                        <button>Search</button><br></li>
+                    </form>
             </ul>
         </nav>
         <table>

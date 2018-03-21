@@ -11,9 +11,11 @@ class html_generator
     private $current_page;
     private $page_limit;
     private $sort_by;
+    private $search_string;
 
     function __construct(
-        $sort_by, $sort_order, $page_limit, $current_page, $show_imdb)
+        $sort_by, $sort_order, $page_limit, $current_page, $show_imdb,
+        $search_string)
     {
         $this->_titles = array(
             "Title", "Year", "Letter", "Folder", "Imdb", "Added");
@@ -23,6 +25,7 @@ class html_generator
         $this->show_imdb = $show_imdb;
         $this->current_page = $current_page == "" ? 0 : intval($current_page);
         $this->page_limit = $page_limit == "" ? 0 : intval($page_limit);
+        $this->search_string = $search_string;
     }
 
     public function title()
@@ -99,6 +102,24 @@ class html_generator
         return $ret . "\r\n</tr>";
     }
 
+    private function _has_search_hit($mov)
+    {
+        $regex = "/" . str_replace("+", ".+", $this->search_string) . "/i";
+        if(preg_match($regex, $this->_mov_db->data($mov, "imdb")))
+        {
+            return true;
+        }
+        if(preg_match($regex, $this->_mov_db->omdb_data($mov, "Title")))
+        {
+            return true;
+        }
+        if(preg_match($regex, $this->_mov_db->data($mov, "folder")))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public function table_data()
     {
         $count = 0;
@@ -119,15 +140,18 @@ class html_generator
                 $folder_link = "<a href=\"" .
                     $this->_generate_link_options($this->current_page, $imdb) .
                     "\">{$folder}</a>";
+                $title = $this->_mov_db->omdb_data($mov, "Title");
 
-                $ret .= $this->_generate_table_row(array(
-                    $this->_mov_db->omdb_data($mov, "Title"),
-                    $this->_mov_db->omdb_data($mov, "Year"),
-                    $this->_mov_db->data($mov, "letter"),
-                    $folder_link, // Added
-                    $imdb_link,
-                    $date->format('Y-m-d')
-                ));
+                if(!$this->search_string || $this->_has_search_hit($mov)){
+                    $ret .= $this->_generate_table_row(array(
+                        $this->_mov_db->omdb_data($mov, "Title"),
+                        $this->_mov_db->omdb_data($mov, "Year"),
+                        $this->_mov_db->data($mov, "letter"),
+                        $folder_link,
+                        $imdb_link,
+                        $date->format('Y-m-d')
+                    ));
+                }
 
                 if($imdb && $imdb == $this->show_imdb)
                 {
@@ -135,11 +159,10 @@ class html_generator
                 }
             }
 
-
-
             $count++;
 
-            if($this->page_limit && $count > $start_at + $this->page_limit)
+            if(!$this->search_string && $this->page_limit &&
+                $count > $start_at + $this->page_limit)
             {
                 break;
             }
