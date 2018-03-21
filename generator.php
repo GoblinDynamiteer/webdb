@@ -19,7 +19,7 @@ class html_generator
             "Title", "Year", "Letter", "Folder", "Imdb", "Added");
         $this->_mov_db = new mov_db();
         $this->sort_by = $sort_by;
-        $this->sort_order = $sort_order == "asc" ? "desc" : "asc";
+        $this->sort_order = $sort_order;
         $this->show_imdb = $show_imdb;
         $this->current_page = $current_page == "" ? 0 : intval($current_page);
         $this->page_limit = $page_limit == "" ? 0 : intval($page_limit);
@@ -44,19 +44,25 @@ class html_generator
         return $header_string;
     }
 
+    private function _generate_link_options($page, $imdb)
+    {
+        $var_string = "index.php?page=" . (string)$page;
+        $var_string .= ($this->page_limit ? "&limit=" . $this->page_limit : "");
+        $var_string .= ($this->sort_by ? "&sort=" . $this->sort_by : "");
+        $var_string .= ($this->sort_order ? "&order=" . $this->sort_order : "");
+        $var_string .= $imdb == "" ? "" : "&show_imdb={$imdb}";
+        return $var_string;
+    }
+
     public function page_nav_footer()
     {
         $footer_string = "";
-        $var_string = ($this->page_limit ? "&limit=" . $this->page_limit : "");
-        $var_string = ($this->sort_by ? "&sort=" . $this->sort_by : "");
-
         $prev = $this->current_page == 0 ? 0 : ($this->current_page) - 1;
-        $footer_string = "<a href=\"index.php?&page=" .
-            (string)$prev . $var_string. "\">PREV</a>";
+        $footer_string = "<a href=\"" . $this->_generate_link_options($prev, "").
+            "\">PREV</a>";
         $footer_string .= " PAGE " . (string)($this->current_page) . " ";
-        $footer_string .= "<a href=\"index.php?page=" .
-            (string)(1 + $this->current_page) .
-            $var_string ."\">NEXT</a>";
+        $footer_string .= "<a href=\"" .
+            $this->_generate_link_options(1 + $this->current_page, "") ."\">NEXT</a>";
         return $footer_string;
     }
 
@@ -92,12 +98,20 @@ class html_generator
             {
                 $date = DateTime::createFromFormat('j M Y',
                     $this->_mov_db->data($mov, "date_scanned"));
+                $imdb = $this->_mov_db->data($mov, "imdb");
+                $imdb_link =
+                    "<a href=\"http://www.imdb.com/title/{$imdb}\">{$imdb}</a>";
+                $folder = $this->_mov_db->data($mov, "folder");
+                $folder_link = "<a href=\"" .
+                    $this->_generate_link_options($this->current_page, $imdb) .
+                    "\">{$folder}</a>";
+
                 $ret .= $this->_generate_table_row(array(
                     $this->_mov_db->omdb_data($mov, "Title"),
                     $this->_mov_db->omdb_data($mov, "Year"),
                     $this->_mov_db->data($mov, "letter"),
-                    $this->_mov_db->data($mov, "folder"), // Added
-                    $this->_mov_db->data($mov, "imdb"),
+                    $folder_link, // Added
+                    $imdb_link,
                     $date->format('Y-m-d')
                 ));
             }

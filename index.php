@@ -13,6 +13,7 @@
     <head>
         <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
         <title><?php echo $hmtl_gen->title(); ?></title>
     </head>
     <body>

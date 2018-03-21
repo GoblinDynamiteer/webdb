@@ -79,6 +79,13 @@ table {
     border: 0px;
 }
 
+table tr td, a:link, a:visited {
+    font-family: 'Open Sans', sans-serif;
+    color: black;
+    text-decoration: none;
+    font-weight: bolder;
+}
+
 tr:nth-child(even) {background-color: #f2f2f2;}
 tr:hover td {background:lightblue}
 
