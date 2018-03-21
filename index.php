@@ -7,7 +7,7 @@
         isset($_GET['order']) ? $_GET['order'] : "asc",
         isset($_GET['limit']) ? $_GET['limit'] : "25",
         isset($_GET['page']) ? $_GET['page'] : "0",
-        isset($_GET['info']) ? $_GET['info'] : "");
+        isset($_GET['extend_info']) ? $_GET['extend_info'] : "");
  ?>
 <html>
     <head>

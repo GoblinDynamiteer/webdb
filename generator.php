@@ -39,8 +39,6 @@ class html_generator
                 "&order={$this->sort_order}\">{$title}</a></th>";
             $header_string .= $t;
         }
-
-
         return $header_string;
     }
 
@@ -50,7 +48,7 @@ class html_generator
         $var_string .= ($this->page_limit ? "&limit=" . $this->page_limit : "");
         $var_string .= ($this->sort_by ? "&sort=" . $this->sort_by : "");
         $var_string .= ($this->sort_order ? "&order=" . $this->sort_order : "");
-        $var_string .= $imdb == "" ? "" : "&show_imdb={$imdb}";
+        $var_string .= $imdb == "" ? "" : "&extend_info={$imdb}";
         return $var_string;
     }
 
@@ -71,17 +69,33 @@ class html_generator
         $ret = "\r\n<tr>";
         foreach ($col_data as $data)
         {
-            $imdb_pattern = "/^tt[0-9]{1,}$/";
-            if(preg_match($imdb_pattern, $data))
-            {
-                $link = "http://www.imdb.com/title/" . $data;
-                $ret .= "\r\n<td><a href=\"" . $link . "\">" . $data . "</a></td>";
-            }
-            else
-            {
-                $ret .= "\r\n<td>{$data}</td>";
-            }
+            $ret .= "\r\n<td>{$data}</td>";
         }
+        return $ret . "\r\n</tr>";
+    }
+
+    private function _generate_table_row_mov_info($mov)
+    {
+        $colspan = (string)count($this->_titles);
+
+        $folder = $this->_mov_db->data($mov, "folder");
+        $letter = $this->_mov_db->data($mov, "letter");
+        $imdb = $this->_mov_db->data($mov, "imdb");
+        $title = $this->_mov_db->omdb_data($mov, "Title");
+        $title_upper = strtoupper($title);
+        $genre = $this->_mov_db->omdb_data($mov, "Genre");
+        $year = $this->_mov_db->omdb_data($mov, "Year");
+        $actors = $this->_mov_db->omdb_data($mov, "Actors");
+        $rating = $this->_mov_db->omdb_data($mov, "imdbRating");
+        $country = $this->_mov_db->omdb_data($mov, "Country");
+
+        $ret = "\r\n<tr><td class=\"movieinfo\"colspan =\"{$colspan}\">
+            <h2>{$title_upper} ({$year})</h2>
+            {$genre}<br>
+            COUNTRY: $country<br>
+            ACTORS: {$actors}<br>
+            {$imdb} - RATING: {$rating}<br>
+            LOCATION: /{$letter}/$folder/";
         return $ret . "\r\n</tr>";
     }
 
@@ -114,7 +128,14 @@ class html_generator
                     $imdb_link,
                     $date->format('Y-m-d')
                 ));
+
+                if($imdb && $imdb == $this->show_imdb)
+                {
+                    $ret .= $this->_generate_table_row_mov_info($mov);
+                }
             }
+
+
 
             $count++;
 
