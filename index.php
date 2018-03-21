@@ -28,7 +28,7 @@
             </ul>
         </nav>
         <table>
-            <tr class="tableheader">
+            <tr>
                 <?php echo $hmtl_gen->table_header(); ?>
             </tr>
             <?php

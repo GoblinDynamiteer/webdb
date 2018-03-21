@@ -35,7 +35,7 @@ class html_generator
         $header_string = "";
         foreach ($this->_titles as $title)
         {
-            $t = "\r\n<th><a href=\"index.php?sort=" . strtolower($title) .
+            $t = "\r\n<th class=\"tableheader\"><a href=\"index.php?sort=" . strtolower($title) .
                 "&order={$this->sort_order}\">{$title}</a></th>";
             $header_string .= $t;
         }
