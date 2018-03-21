@@ -2,10 +2,12 @@
 <?php
     require_once __DIR__."/config.php";
     require_once SITE_ROOT."/generator.php";
-    $hmtl_gen = new html_generator();
-    $sort = isset($_GET['sort']) ? $_GET['sort'] : "";
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : "25";
-    $page = isset($_GET['page']) ? $_GET['page'] : "0";
+    $hmtl_gen = new html_generator(
+        isset($_GET['sort']) ? $_GET['sort'] : "",
+        isset($_GET['order']) ? $_GET['order'] : "asc",
+        isset($_GET['limit']) ? $_GET['limit'] : "25",
+        isset($_GET['page']) ? $_GET['page'] : "0",
+        isset($_GET['info']) ? $_GET['info'] : "");
  ?>
 <html>
     <head>
@@ -29,10 +31,10 @@
                 <?php echo $hmtl_gen->table_header(); ?>
             </tr>
             <?php
-                echo $hmtl_gen->table_data($sort, $limit, $page); ?>
+                echo $hmtl_gen->table_data(); ?>
         </table>
         <footer>
-            <?php echo $hmtl_gen->page_nav_footer($page); ?>
+            <?php echo $hmtl_gen->page_nav_footer(); ?>
         </footer>
     </body>
 </html>

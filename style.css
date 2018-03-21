@@ -1,5 +1,5 @@
-nav, 
-header, 
+nav,
+header,
 footer {
     display: block;
 }
@@ -18,14 +18,21 @@ header h1 {
 
 footer {
     display: block;
-    padding-top: : 5px;
-    padding-bottom: : 5px;
+    padding-top: : 15px;
+    padding-bottom: : 15px;
     margin: auto;
     font-family: 'Mina', sans-serif;
+    font-weight: bold;
     color: white;
     background-color: darkcyan;
     clear: left;
     text-align: center;
+}
+
+footer a:link, a:visited {
+    font-family: 'Mina', sans-serif;
+    color: white;
+    text-decoration: none;
 }
 
 nav {

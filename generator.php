@@ -6,13 +6,23 @@ class html_generator
 {
     private $_titles;
     private $_mov_db;
-    private $asc_desc_sort;
+    private $show_imdb;
+    private $sort_order;
+    private $current_page;
+    private $page_limit;
+    private $sort_by;
 
-    function __construct()
+    function __construct(
+        $sort_by, $sort_order, $page_limit, $current_page, $show_imdb)
     {
-        $this->_titles = array("Title", "Year", "Letter", "Folder", "Imdb", "Added");
+        $this->_titles = array(
+            "Title", "Year", "Letter", "Folder", "Imdb", "Added");
         $this->_mov_db = new mov_db();
-        $this->asc_desc_sort = true;
+        $this->sort_by = $sort_by;
+        $this->sort_order = $sort_order == "asc" ? "desc" : "asc";
+        $this->show_imdb = $show_imdb;
+        $this->current_page = $current_page == "" ? 0 : intval($current_page);
+        $this->page_limit = $page_limit == "" ? 0 : intval($page_limit);
     }
 
     public function title()
@@ -23,28 +33,30 @@ class html_generator
     public function table_header()
     {
         $header_string = "";
-        $order = $this->asc_desc_sort ? "asc" : "desc";
-        $this->asc_desc_sort = !$this->asc_desc_sort;
-
         foreach ($this->_titles as $title)
         {
             $t = "\r\n<th><a href=\"index.php?sort=" . strtolower($title) .
-                "&order=" . $order .
-                "\">{$title}</a></th>";
+                "&order={$this->sort_order}\">{$title}</a></th>";
             $header_string .= $t;
         }
 
 
         return $header_string;
     }
-    
-    public function page_nav_footer($page)
+
+    public function page_nav_footer()
     {
         $footer_string = "";
-        $prev = intval($page) == 0 ? 0 : intval($page) - 1;
-        $footer_string = "<a href=\"index.php?limit=25&page=" . (string)$prev . "\">PREV</a>";
-        $footer_string .= " PAGE " . $page . " ";
-        $footer_string .= "<a href=\"index.php?limit=25&page=" . (string)(1 + intval($page)) . "\">NEXT</a>";
+        $var_string = ($this->page_limit ? "&limit=" . $this->page_limit : "");
+        $var_string = ($this->sort_by ? "&sort=" . $this->sort_by : "");
+
+        $prev = $this->current_page == 0 ? 0 : ($this->current_page) - 1;
+        $footer_string = "<a href=\"index.php?&page=" .
+            (string)$prev . $var_string. "\">PREV</a>";
+        $footer_string .= " PAGE " . (string)($this->current_page) . " ";
+        $footer_string .= "<a href=\"index.php?page=" .
+            (string)(1 + $this->current_page) .
+            $var_string ."\">NEXT</a>";
         return $footer_string;
     }
 
@@ -61,18 +73,18 @@ class html_generator
             }
             else
             {
-                $ret .= "\r\n<td>{$data}</td>";    
+                $ret .= "\r\n<td>{$data}</td>";
             }
         }
         return $ret . "\r\n</tr>";
     }
 
-    public function table_data($sort, $limit, $page)
+    public function table_data()
     {
         $count = 0;
-        $start_at = intval($page) * intval($limit);
-        $this->_mov_db->sort_by($sort);
-        
+        $start_at = $this->current_page * $this->page_limit;
+        $this->_mov_db->sort_by($this->sort_by, $this->sort_order);
+
         $ret = "";
         foreach ($this->_mov_db->keys() as $mov)
         {
@@ -89,10 +101,10 @@ class html_generator
                     $date->format('Y-m-d')
                 ));
             }
-            
+
             $count++;
-            
-            if($limit != "" && $count > $start_at + intval($limit))
+
+            if($this->page_limit && $count > $start_at + $this->page_limit)
             {
                 break;
             }

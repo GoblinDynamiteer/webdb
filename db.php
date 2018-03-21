@@ -7,6 +7,7 @@
         }
 
         private $_db;
+        private $sorting_order;
 
         /* Load json db */
         private function _load_db()
@@ -22,41 +23,84 @@
         }
 
         /* Get all keys (movies) */
-        public function sort_by($sort)
+        public function sort_by($sort, $order)
         {
+            $this->sorting_order = $order;
+
             if($sort == "year")
             {
                 usort($this->_db, array($this, "_sort_by_year"));
             }
+
             if($sort == "added")
             {
                 usort($this->_db, array($this, "_sort_by_added"));
             }
+
+            if($sort == "letter")
+            {
+                usort($this->_db, array($this, "_sort_by_letter"));
+            }
         }
 
+        /* Sort by movie year */
         private function _sort_by_year($a, $b)
         {
             $ystring_a = $ystring_b = "0000";
 
-            if(array_key_exists("Year", $a['omdb']))
+            if($a['omdb'] && array_key_exists("Year", $a['omdb']))
             {
                 $ystring_a = $a['omdb']['Year'];
             }
 
-            if(array_key_exists("Year", $b['omdb']))
+            if($b['omdb'] && array_key_exists("Year", $b['omdb']))
             {
                 $ystring_b = $b['omdb']['Year'];
+            }
+
+            if($this->sorting_order == "desc")
+            {
+                return strnatcmp($ystring_b, $ystring_a);
             }
 
             return strnatcmp($ystring_a, $ystring_b);
         }
 
+        /* Sort by added date, helper function */
         private function _sort_by_added($a, $b)
         {
             $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
             $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
+
+            if($this->sorting_order == "desc")
+            {
+                return ($adate > $bdate);
+            }
+
             return ($adate < $bdate);
-            //return strcmp($a['date_scanned'], $b['date_scanned']);
+        }
+
+        /* Sort by letter, helper function */
+        private function _sort_by_letter($a, $b)
+        {
+            $let_a = $let_b = "-";
+
+            if(array_key_exists("letter", $a))
+            {
+                $let_a = $a['letter'];
+            }
+
+            if(array_key_exists("letter", $b))
+            {
+                $let_b = $b['letter'];
+            }
+
+            if($this->sorting_order == "desc")
+            {
+                return ($let_a > $let_b);
+            }
+
+            return ($let_a < $let_b);
         }
 
         /* Get specific data */
@@ -65,7 +109,10 @@
             if(array_key_exists($mov, $this->_db))
             {
                 $m = $this->_db[$mov];
-                return array_key_exists($key, $m) ? $m[$key] : "-";
+                if($m)
+                {
+                    return array_key_exists($key, $m) ? $m[$key] : "-";
+                }
             }
             return "-";
         }
@@ -75,9 +122,11 @@
         {
             if(array_key_exists($mov, $this->_db))
             {
-                // FIXME: Build check for key-exists: omdb
                 $m = $this->_db[$mov]['omdb'];
-                return array_key_exists($key, $m) ? $m[$key] : "-";
+                if($m)
+                {
+                    return array_key_exists($key, $m) ? $m[$key] : "-";
+                }
             }
             return "-";
         }
