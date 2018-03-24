@@ -67,9 +67,9 @@ class html_generator
         return $footer_string;
     }
 
-    private function _generate_table_row($col_data)
+    private function _generate_table_row($col_data, $status)
     {
-        $ret = "\r\n<tr>";
+        $ret = "\r\n<tr class=\"status_{$status}\">";
         foreach ($col_data as $data)
         {
             $ret .= "\r\n<td>{$data}</td>";
@@ -141,7 +141,7 @@ class html_generator
                     $this->_generate_link_options($this->current_page, $imdb) .
                     "\">{$folder}</a>";
                 $title = $this->_mov_db->omdb_data($mov, "Title");
-
+                $status = $this->_mov_db->data($mov, "status");
                 if(!$this->search_string || $this->_has_search_hit($mov)){
                     $ret .= $this->_generate_table_row(array(
                         $this->_mov_db->omdb_data($mov, "Title"),
@@ -150,7 +150,7 @@ class html_generator
                         $folder_link,
                         $imdb_link,
                         $date->format('Y-m-d')
-                    ));
+                    ), $status);
                 }
 
                 if($imdb && $imdb == $this->show_imdb)
