@@ -1,14 +1,34 @@
 <!DOCTYPE html>
 <?php
+    session_start();
+    if(isset($_GET['db']))
+    {
+        $_SESSION["db"] = $_GET['db'];
+    }
     require_once __DIR__."/config.php";
     require_once SITE_ROOT."/generator.php";
-    $hmtl_gen = new html_generator(
-        isset($_GET['sort']) ? $_GET['sort'] : "",
-        isset($_GET['order']) ? $_GET['order'] : "asc",
-        isset($_GET['limit']) ? $_GET['limit'] : "25",
-        isset($_GET['page']) ? $_GET['page'] : "0",
-        isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
-        isset($_GET['search']) ? $_GET['search'] : "");
+
+    if(!isset($_SESSION["db"]) || $_SESSION["db"] == "mov")
+    {
+        $hmtl_gen = new html_mov_generator(
+            isset($_GET['sort']) ? $_GET['sort'] : "",
+            isset($_GET['order']) ? $_GET['order'] : "asc",
+            isset($_GET['limit']) ? $_GET['limit'] : "25",
+            isset($_GET['page']) ? $_GET['page'] : "0",
+            isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
+            isset($_GET['search']) ? $_GET['search'] : "");
+    }
+    else if($_SESSION["db"] == "tv")
+    {
+        $hmtl_gen = new html_tv_generator(
+            isset($_GET['sort']) ? $_GET['sort'] : "",
+            isset($_GET['order']) ? $_GET['order'] : "asc",
+            isset($_GET['limit']) ? $_GET['limit'] : "25",
+            isset($_GET['page']) ? $_GET['page'] : "0",
+            isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
+            isset($_GET['search']) ? $_GET['search'] : "");
+    }
+
  ?>
 <html>
     <head>
@@ -19,12 +39,13 @@
     </head>
     <body>
         <header>
-           <h1>MovieDb</h1>
+           <h1><a href="index.php?db=mov">MovieDb</a> |
+           <a href="index.php?db=tv">TVDb</a></h1>
         </header>
         <nav>
             <ul class="topnav">
                 <li><a href="index.php?sort=title&limit=25">All</a><br></li>
-                <li><a href="index.php?sort=added&limit=25">Newest</a><br></li>
+                <li><a href="index.php?sort=added&limit=25&order=desc">Newest</a><br></li>
                 <li><a href="index.php?sort=added&limit=25">Year: 2018</a><br></li>
                 <li>
                     <form name="form" action="" method="get">

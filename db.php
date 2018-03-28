@@ -131,4 +131,53 @@
             return "-";
         }
     }
+
+    class tv_db
+    {
+        function __construct()
+        {
+            $this->_load_db();
+        }
+
+        private $_db;
+        private $_ep_list;
+        private $sorting_order;
+
+        /* Load json db */
+        private function _load_db()
+        {
+            $json_string = file_get_contents("dbtv.json");
+            $this->_db = json_decode($json_string, true);
+            $this->_ep_list = $this->_flatten_episodes();
+        }
+
+        private function _flatten_episodes()
+        {
+            $ep = array();
+            foreach ($this->_db as $show)
+            {
+                foreach ($show["seasons"] as $season)
+                {
+                    foreach ($season["episodes"] as $episode)
+                    {
+                        $episode["show"] = $show["folder"];
+                        array_push($ep, $episode);
+                    }
+                }
+            }
+            return $ep;
+        }
+
+        /* Get all keys (shows) */
+        public function keys()
+        {
+            return array_keys($this->_db);
+        }
+
+        /* Get all keys (shows) */
+        public function episode_list()
+        {
+            return $this->_ep_list;
+        }
+    }
 ?>

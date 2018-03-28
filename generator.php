@@ -2,7 +2,7 @@
 require_once __DIR__."/config.php";
 require_once SITE_ROOT."/db.php";
 
-class html_generator
+class html_mov_generator
 {
     private $_titles;
     private $_mov_db;
@@ -21,7 +21,7 @@ class html_generator
             "Title", "Year", "Letter", "Folder", "Imdb", "Added");
         $this->_mov_db = new mov_db();
         $this->sort_by = $sort_by;
-        $this->sort_order = $sort_order;
+        $this->sort_order = $sort_order == "asc" ? "desc" : "asc";
         $this->show_imdb = $show_imdb;
         $this->current_page = $current_page == "" ? 0 : intval($current_page);
         $this->page_limit = $page_limit == "" ? 0 : intval($page_limit);
@@ -171,4 +171,84 @@ class html_generator
     }
 }
 
+class html_tv_generator
+{
+    private $_titles;
+    private $_tv_db;
+    private $show_imdb;
+    private $sort_order;
+    private $current_page;
+    private $page_limit;
+    private $sort_by;
+    private $search_string;
+
+    function __construct(
+        $sort_by, $sort_order, $page_limit, $current_page, $show_imdb,
+        $search_string)
+    {
+        $this->_titles = array(
+            "Show", "Episode", "Title", "File", "Imdb", "Added");
+        $this->_tv_db = new tv_db();
+        $this->sort_by = $sort_by;
+        $this->sort_order = $sort_order == "asc" ? "desc" : "asc";
+        $this->show_imdb = $show_imdb;
+        $this->current_page = $current_page == "" ? 0 : intval($current_page);
+        $this->page_limit = $page_limit == "" ? 0 : intval($page_limit);
+        $this->search_string = $search_string;
+    }
+
+    public function title()
+    {
+        return "TVDb";
+    }
+
+    public function table_header()
+    {
+        $header_string = "";
+        foreach ($this->_titles as $title)
+        {
+            $t = "\r\n<th class=\"tableheader\"><a href=\"index.php?sort=" . strtolower($title) .
+                "&order={$this->sort_order}\">{$title}</a></th>";
+            $header_string .= $t;
+        }
+        return $header_string;
+    }
+
+    public function table_data()
+    {
+        $eplist = $this->_tv_db->episode_list();
+        $str = "";
+
+        //"Show", "Episode", "Title", "File", "Imdb", "Added");
+        foreach($eplist as $ep)
+        {
+            $str .= $this->_generate_table_row(array(
+                $ep['show'],
+                $ep['se'],
+                $ep['omdb'] ? $ep['omdb']['Title'] : "N/A",
+                $ep['file'],
+                $ep['omdb'] ? $ep['omdb']['imdbID'] : "N/A",
+                $ep['date_scanned']
+            ));
+        }
+
+        return $str;
+    }
+
+    private function _generate_table_row($col_data)
+    {
+        $ret = "\r\n<tr class=\"status_ok\">";
+        foreach ($col_data as $data)
+        {
+            $ret .= "\r\n<td>{$data}</td>";
+        }
+        return $ret . "\r\n</tr>";
+    }
+
+    public function page_nav_footer()
+    {
+        return "TABLEFOOTER TV<BR>";
+    }
+
+}
 ?>
