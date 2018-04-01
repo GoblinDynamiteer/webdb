@@ -229,12 +229,21 @@
             return $ep;
         }
 
-        /* Sort by movie year */
+        private function _sort_by_se($a, $b)
+        {
+            if($this->sorting_order == "za")
+            {
+                return strnatcmp($b["se"], $a["se"]);
+            }
+
+            return strnatcmp($a["se"], $b["se"]);
+        }
+
         private function _sort_by_show($a, $b)
         {
             if(strnatcmp($a["show"], $b["show"])) // Not same show
             {
-                if($this->sorting_order == "az")
+                if($this->sorting_order == "za")
                 {
                     return strnatcmp($b["show"], $a["show"]);
                 }
@@ -242,12 +251,44 @@
                 return strnatcmp($a["show"], $b["show"]);
             }
 
-            if($this->sorting_order == "az")
+            return $this->_sort_by_se($a, $b);
+        }
+
+        private function _sort_by_title($a, $b)
+        {
+            $t_a = $t_b = "ZZZZ";
+
+            if($a['omdb'] && array_key_exists("Title", $a['omdb']))
             {
-                return strnatcmp($b["se"], $a["se"]);
+                $t_a = $a['omdb']['Title'];
             }
 
-            return strnatcmp($a["se"], $b["se"]);
+            if($b['omdb'] && array_key_exists("Title", $b['omdb']))
+            {
+                $t_b = $b['omdb']['Title'];
+            }
+
+            if($this->sorting_order == "az")
+            {
+                return strnatcmp($t_a, $t_b);
+            }
+
+            return strnatcmp($t_b, $t_a);
+
+        }
+
+        /* Sort by added date, helper function */
+        private function _sort_by_added($a, $b)
+        {
+            $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
+            $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
+
+            if($this->sorting_order == "az")
+            {
+                return ($adate > $bdate);
+            }
+
+            return ($adate < $bdate);
         }
 
         public function sort_by($sort, $order)
@@ -257,6 +298,21 @@
             if($sort == "show")
             {
                 usort($this->_ep_list, array($this, "_sort_by_show"));
+            }
+
+            else if($sort == "added")
+            {
+                usort($this->_ep_list, array($this, "_sort_by_added"));
+            }
+
+            else if($sort == "episode")
+            {
+                usort($this->_ep_list, array($this, "_sort_by_se"));
+            }
+
+            else if($sort == "title")
+            {
+                usort($this->_ep_list, array($this, "_sort_by_title"));
             }
         }
 
