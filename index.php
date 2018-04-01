@@ -45,13 +45,13 @@
         <nav>
             <ul class="topnav">
                 <li><a href="index.php?sort=title&limit=25">All</a><br></li>
-                <li><a href="index.php?sort=added&limit=25&order=desc">Newest</a><br></li>
-                <li><a href="index.php?sort=added&limit=25">Year: 2018</a><br></li>
+                <li><a href="index.php?sort=added&limit=25&order=asc">Newest</a><br></li>
                 <li>
                     <form name="form" action="" method="get">
                         <input type="text" name="search" value="">
-                        <button>Search</button><br></li>
+                        <button>Search</button><br>
                     </form>
+                </li>
             </ul>
         </nav>
         <table>

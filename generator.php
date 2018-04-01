@@ -21,7 +21,7 @@ class html_mov_generator
             "Title", "Year", "Letter", "Folder", "Imdb", "Added");
         $this->_mov_db = new mov_db();
         $this->sort_by = $sort_by;
-        $this->sort_order = $sort_order == "asc" ? "desc" : "asc";
+        $this->sort_order = $sort_order;
         $this->show_imdb = $show_imdb;
         $this->current_page = $current_page == "" ? 0 : intval($current_page);
         $this->page_limit = $page_limit == "" ? 0 : intval($page_limit);
@@ -36,10 +36,11 @@ class html_mov_generator
     public function table_header()
     {
         $header_string = "";
+        $sort_order = $this->sort_order == "asc" ? "desc" : "asc";
         foreach ($this->_titles as $title)
         {
             $t = "\r\n<th class=\"tableheader\"><a href=\"index.php?sort=" . strtolower($title) .
-                "&order={$this->sort_order}\">{$title}</a></th>";
+                "&order={$sort_order}\">{$title}</a></th>";
             $header_string .= $t;
         }
         return $header_string;
@@ -55,15 +56,25 @@ class html_mov_generator
         return $var_string;
     }
 
+    private function _get_total_page_count()
+    {
+        return floor($this->_mov_db->count() / $this->page_limit);
+    }
+
     public function page_nav_footer()
     {
         $footer_string = "";
+        $total_pages = $this->_get_total_page_count();
+
+        $mov_count = $this->_mov_db->count();
         $prev = $this->current_page == 0 ? 0 : ($this->current_page) - 1;
         $footer_string = "<a href=\"" . $this->_generate_link_options($prev, "").
             "\">PREV</a>";
-        $footer_string .= " PAGE " . (string)($this->current_page) . " ";
+            $footer_string .= " | PAGE " . (string)($this->current_page) .
+                "  OF {$total_pages} | ";
         $footer_string .= "<a href=\"" .
             $this->_generate_link_options(1 + $this->current_page, "") ."\">NEXT</a>";
+        $footer_string .= "<br>total movies: {$mov_count}";
         return $footer_string;
     }
 
@@ -202,6 +213,16 @@ class html_tv_generator
         return "TVDb";
     }
 
+    private function _generate_link_options($page, $imdb)
+    {
+        $var_string = "index.php?page=" . (string)$page;
+        $var_string .= ($this->page_limit ? "&limit=" . $this->page_limit : "");
+        $var_string .= ($this->sort_by ? "&sort=" . $this->sort_by : "");
+        $var_string .= ($this->sort_order ? "&order=" . $this->sort_order : "");
+        $var_string .= $imdb == "" ? "" : "&extend_info={$imdb}";
+        return $var_string;
+    }
+
     public function table_header()
     {
         $header_string = "";
@@ -218,21 +239,38 @@ class html_tv_generator
     {
         $eplist = $this->_tv_db->episode_list();
         $str = "";
+        $count = 0;
+        $start_at = $this->current_page * $this->page_limit;
+        //$this->_mov_db->sort_by($this->sort_by, $this->sort_order);
 
         //"Show", "Episode", "Title", "File", "Imdb", "Added");
         foreach($eplist as $ep)
         {
-            $str .= $this->_generate_table_row(array(
-                $ep['show'],
-                $ep['se'],
-                $ep['omdb'] ? $ep['omdb']['Title'] : "N/A",
-                $ep['file'],
-                $ep['omdb'] ? $ep['omdb']['imdbID'] : "N/A",
-                $ep['date_scanned']
-            ));
-        }
+            if($count >= $start_at)
+            {
+                $str .= $this->_generate_table_row(array(
+                    $ep['show'],
+                    $ep['se'],
+                    $ep['omdb'] ? $ep['omdb']['Title'] : "N/A",
+                    $ep['file'],
+                    $ep['omdb'] ? $ep['omdb']['imdbID'] : "N/A",
+                    $ep['date_scanned']
+                ));
+            }
 
+            $count++;
+            if($this->page_limit && $count > $start_at + $this->page_limit)
+            {
+                break;
+            }
+
+        }
         return $str;
+    }
+
+    private function _get_total_page_count()
+    {
+        return floor($this->_tv_db->count_episodes() / $this->page_limit);
     }
 
     private function _generate_table_row($col_data)
@@ -247,7 +285,20 @@ class html_tv_generator
 
     public function page_nav_footer()
     {
-        return "TABLEFOOTER TV<BR>";
+        $footer_string = "";
+        $ep_count = $this->_tv_db->count_episodes();
+        $show_count = $this->_tv_db->count_shows();
+        $total_pages = $this->_get_total_page_count();
+        $prev = $this->current_page == 0 ? 0 : ($this->current_page) - 1;
+
+        $footer_string = "<a href=\"" . $this->_generate_link_options($prev, "").
+            "\">PREV</a>";
+        $footer_string .= " | PAGE " . (string)($this->current_page) .
+            "  OF {$total_pages} | ";
+        $footer_string .= "<a href=\"" .
+            $this->_generate_link_options(1 + $this->current_page, "") ."\">NEXT</a>";
+        $footer_string .= "<br>Totals: episodes: {$ep_count} | shows: {$show_count}";
+        return $footer_string;
     }
 
 }

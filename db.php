@@ -16,6 +16,11 @@
             $this->_db = json_decode($json_string, true);
         }
 
+        public function count()
+        {
+            return count($this->_db);
+        }
+
         /* Get all keys (movies) */
         public function keys()
         {
@@ -172,6 +177,16 @@
         public function keys()
         {
             return array_keys($this->_db);
+        }
+
+        public function count_shows()
+        {
+            return count($this->_db);
+        }
+
+        public function count_episodes()
+        {
+            return count($this->_ep_list);
         }
 
         /* Get all keys (shows) */
