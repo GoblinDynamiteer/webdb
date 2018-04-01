@@ -37,6 +37,11 @@
                 usort($this->_db, array($this, "_sort_by_year"));
             }
 
+            if($sort == "title")
+            {
+                usort($this->_db, array($this, "_sort_by_title"));
+            }
+
             if($sort == "added")
             {
                 usort($this->_db, array($this, "_sort_by_added"));
@@ -45,6 +50,11 @@
             if($sort == "letter")
             {
                 usort($this->_db, array($this, "_sort_by_letter"));
+            }
+
+            if($sort == "folder")
+            {
+                usort($this->_db, array($this, "_sort_by_folder"));
             }
         }
 
@@ -63,12 +73,58 @@
                 $ystring_b = $b['omdb']['Year'];
             }
 
-            if($this->sorting_order == "desc")
+            if($this->sorting_order == "az")
             {
-                return strnatcmp($ystring_b, $ystring_a);
+                return strnatcmp($ystring_a, $ystring_b);
             }
 
-            return strnatcmp($ystring_a, $ystring_b);
+            return strnatcmp($ystring_b, $ystring_a);
+        }
+
+        /* Sort by movie title */
+        private function _sort_by_title($a, $b)
+        {
+            $t_a = $t_b = "ZZZZ";
+
+            if($a['omdb'] && array_key_exists("Title", $a['omdb']))
+            {
+                $t_a = $a['omdb']['Title'];
+            }
+
+            if($b['omdb'] && array_key_exists("Title", $b['omdb']))
+            {
+                $t_b = $b['omdb']['Title'];
+            }
+
+            if($this->sorting_order == "az")
+            {
+                return strnatcmp($t_a, $t_b);
+            }
+
+            return strnatcmp($t_b, $t_a);
+        }
+
+        /* Sort by movie title */
+        private function _sort_by_folder($a, $b)
+        {
+            $f_a = $f_b = "ZZZZ";
+
+            if(array_key_exists("folder", $a))
+            {
+                $f_a = $a['folder'];
+            }
+
+            if(array_key_exists("folder", $b))
+            {
+                $f_b = $b['folder'];
+            }
+
+            if($this->sorting_order == "az")
+            {
+                return strnatcmp($f_a, $f_b);
+            }
+
+            return strnatcmp($f_b, $f_a);
         }
 
         /* Sort by added date, helper function */
@@ -77,7 +133,7 @@
             $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
             $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
 
-            if($this->sorting_order == "desc")
+            if($this->sorting_order == "az")
             {
                 return ($adate > $bdate);
             }
@@ -100,7 +156,7 @@
                 $let_b = $b['letter'];
             }
 
-            if($this->sorting_order == "desc")
+            if($this->sorting_order == "az")
             {
                 return ($let_a > $let_b);
             }
@@ -171,6 +227,37 @@
                 }
             }
             return $ep;
+        }
+
+        /* Sort by movie year */
+        private function _sort_by_show($a, $b)
+        {
+            if(strnatcmp($a["show"], $b["show"])) // Not same show
+            {
+                if($this->sorting_order == "az")
+                {
+                    return strnatcmp($b["show"], $a["show"]);
+                }
+
+                return strnatcmp($a["show"], $b["show"]);
+            }
+
+            if($this->sorting_order == "az")
+            {
+                return strnatcmp($b["se"], $a["se"]);
+            }
+
+            return strnatcmp($a["se"], $b["se"]);
+        }
+
+        public function sort_by($sort, $order)
+        {
+            $this->sorting_order = $order;
+
+            if($sort == "show")
+            {
+                usort($this->_ep_list, array($this, "_sort_by_show"));
+            }
         }
 
         /* Get all keys (shows) */

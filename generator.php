@@ -36,9 +36,20 @@ class html_mov_generator
     public function table_header()
     {
         $header_string = "";
-        $sort_order = $this->sort_order == "asc" ? "desc" : "asc";
+        $sort_order = "";
+
         foreach ($this->_titles as $title)
         {
+            if(strtolower($title) == $this->sort_by)
+            {
+                $sort_order = $this->sort_order == "az" ? "za" : "az"; // toggle order if sorted column
+            }
+
+            else
+            {
+                $sort_order = $this->sort_order;
+            }
+
             $t = "\r\n<th class=\"tableheader\"><a href=\"index.php?sort=" . strtolower($title) .
                 "&order={$sort_order}\">{$title}</a></th>";
             $header_string .= $t;
@@ -201,7 +212,7 @@ class html_tv_generator
             "Show", "Episode", "Title", "File", "Imdb", "Added");
         $this->_tv_db = new tv_db();
         $this->sort_by = $sort_by;
-        $this->sort_order = $sort_order == "asc" ? "desc" : "asc";
+        $this->sort_order = $sort_order;
         $this->show_imdb = $show_imdb;
         $this->current_page = $current_page == "" ? 0 : intval($current_page);
         $this->page_limit = $page_limit == "" ? 0 : intval($page_limit);
@@ -226,10 +237,22 @@ class html_tv_generator
     public function table_header()
     {
         $header_string = "";
+        $sort_order = "";
+
         foreach ($this->_titles as $title)
         {
+            if(strtolower($title) == $this->sort_by)
+            {
+                $sort_order = $this->sort_order == "az" ? "za" : "az"; // toggle order if sorted column
+            }
+
+            else
+            {
+                $sort_order = $this->sort_order;
+            }
+
             $t = "\r\n<th class=\"tableheader\"><a href=\"index.php?sort=" . strtolower($title) .
-                "&order={$this->sort_order}\">{$title}</a></th>";
+                "&order={$sort_order}\">{$title}</a></th>";
             $header_string .= $t;
         }
         return $header_string;
@@ -237,11 +260,11 @@ class html_tv_generator
 
     public function table_data()
     {
+        $this->_tv_db->sort_by($this->sort_by, $this->sort_order);
         $eplist = $this->_tv_db->episode_list();
         $str = "";
         $count = 0;
         $start_at = $this->current_page * $this->page_limit;
-        //$this->_mov_db->sort_by($this->sort_by, $this->sort_order);
 
         //"Show", "Episode", "Title", "File", "Imdb", "Added");
         foreach($eplist as $ep)

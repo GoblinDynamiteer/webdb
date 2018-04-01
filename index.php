@@ -12,7 +12,7 @@
     {
         $hmtl_gen = new html_mov_generator(
             isset($_GET['sort']) ? $_GET['sort'] : "",
-            isset($_GET['order']) ? $_GET['order'] : "asc",
+            isset($_GET['order']) ? $_GET['order'] : "az",
             isset($_GET['limit']) ? $_GET['limit'] : "25",
             isset($_GET['page']) ? $_GET['page'] : "0",
             isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
@@ -21,8 +21,8 @@
     else if($_SESSION["db"] == "tv")
     {
         $hmtl_gen = new html_tv_generator(
-            isset($_GET['sort']) ? $_GET['sort'] : "",
-            isset($_GET['order']) ? $_GET['order'] : "asc",
+            isset($_GET['sort']) ? $_GET['sort'] : "show",
+            isset($_GET['order']) ? $_GET['order'] : "az",
             isset($_GET['limit']) ? $_GET['limit'] : "25",
             isset($_GET['page']) ? $_GET['page'] : "0",
             isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
@@ -45,7 +45,7 @@
         <nav>
             <ul class="topnav">
                 <li><a href="index.php?sort=title&limit=25">All</a><br></li>
-                <li><a href="index.php?sort=added&limit=25&order=asc">Newest</a><br></li>
+                <li><a href="index.php?sort=added&limit=25&order=za">Newest</a><br></li>
                 <li>
                     <form name="form" action="" method="get">
                         <input type="text" name="search" value="">
