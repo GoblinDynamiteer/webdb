@@ -18,7 +18,7 @@ class html_mov_generator
         $search_string)
     {
         $this->_titles = array(
-            "Title", "Year", "Letter", "Folder", "Imdb", "Added");
+            "Title", "Year", "Letter", "Folder", "Srt", "Imdb", "Added");
         $this->_mov_db = new mov_db();
         $this->sort_by = $sort_by;
         $this->sort_order = $sort_order;
@@ -155,21 +155,33 @@ class html_mov_generator
             {
                 $date = DateTime::createFromFormat('j M Y',
                     $this->_mov_db->data($mov, "date_scanned"));
+
                 $imdb = $this->_mov_db->data($mov, "imdb");
                 $imdb_link =
                     "<a href=\"http://www.imdb.com/title/{$imdb}\">{$imdb}</a>";
+
                 $folder = $this->_mov_db->data($mov, "folder");
                 $folder_link = "<a href=\"" .
                     $this->_generate_link_options($this->current_page, $imdb) .
                     "\">{$folder}</a>";
+
+                // Determine subtitles:
+                $subs_string = "";
+                $subs_dict = $this->_mov_db->data($mov, "subs");
+                $subs_string .= $subs_dict["sv"] ? "sv" : "";
+                $subs_string .= ($subs_dict["sv"] && $subs_dict["en"] ? " | " : "")
+                    . ($subs_dict["en"] ? "en" : "");
+
                 $title = $this->_mov_db->omdb_data($mov, "Title");
                 $status = $this->_mov_db->data($mov, "status");
+
                 if(!$this->search_string || $this->_has_search_hit($mov)){
                     $ret .= $this->_generate_table_row(array(
                         $this->_mov_db->omdb_data($mov, "Title"),
                         $this->_mov_db->omdb_data($mov, "Year"),
                         $this->_mov_db->data($mov, "letter"),
                         $folder_link,
+                        $subs_string,
                         $imdb_link,
                         $date->format('Y-m-d')
                     ), $status);
