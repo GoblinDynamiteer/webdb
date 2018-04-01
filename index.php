@@ -10,13 +10,7 @@
 
     if(!isset($_SESSION["db"]) || $_SESSION["db"] == "mov")
     {
-        $hmtl_gen = new html_mov_generator(
-            isset($_GET['sort']) ? $_GET['sort'] : "",
-            isset($_GET['order']) ? $_GET['order'] : "az",
-            isset($_GET['limit']) ? $_GET['limit'] : "25",
-            isset($_GET['page']) ? $_GET['page'] : "0",
-            isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
-            isset($_GET['search']) ? $_GET['search'] : "");
+        $hmtl_gen = new html_mov_generator();
     }
     else if($_SESSION["db"] == "tv")
     {
