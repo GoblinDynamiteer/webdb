@@ -337,5 +337,33 @@
         {
             return $this->_ep_list;
         }
+
+        /* Get specific data */
+        function data($show, $key)
+        {
+            if(array_key_exists($show, $this->_db))
+            {
+                $s = $this->_db[$show];
+                if($s)
+                {
+                    return array_key_exists($key, $s) ? $s[$key] : "-";
+                }
+            }
+            return "-";
+        }
+
+        /* Get specific omdb data */
+        function omdb_data($show, $key)
+        {
+            if(array_key_exists($show, $this->_db))
+            {
+                $s = $this->_db[$show]['omdb'];
+                if($s)
+                {
+                    return array_key_exists($key, $s) ? $s[$key] : "-";
+                }
+            }
+            return "-";
+        }
     }
 ?>

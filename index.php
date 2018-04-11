@@ -14,13 +14,7 @@
     }
     else if($_SESSION["db"] == "tv")
     {
-        $hmtl_gen = new html_tv_generator(
-            isset($_GET['sort']) ? $_GET['sort'] : "show",
-            isset($_GET['order']) ? $_GET['order'] : "az",
-            isset($_GET['limit']) ? $_GET['limit'] : "25",
-            isset($_GET['page']) ? $_GET['page'] : "0",
-            isset($_GET['extend_info']) ? $_GET['extend_info'] : "",
-            isset($_GET['search']) ? $_GET['search'] : "");
+        $hmtl_gen = new html_tv_generator();
     }
 
  ?>
@@ -33,13 +27,13 @@
     </head>
     <body>
         <header>
-           <h1><a href="index.php?db=mov">MovieDb</a> |
-           <a href="index.php?db=tv">TVDb</a></h1>
+           <h1><a href="index.php?db=mov&sort=added&limit=50&order=za">MovieDb</a> |
+           <a href="index.php?db=tv&sort=added&limit=50&order=za">TVDb</a></h1>
         </header>
         <nav>
             <ul class="topnav">
-                <li><a href="index.php?sort=title&limit=25">All</a><br></li>
-                <li><a href="index.php?sort=added&limit=25&order=za">Newest</a><br></li>
+                <li><a href="index.php?sort=title&limit=50">All</a><br></li>
+                <li><a href="index.php?sort=added&limit=50&order=za">Newest</a><br></li>
                 <li>
                     <form name="form" action="" method="get">
                         <input type="text" name="search" value="">
