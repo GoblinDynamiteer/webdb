@@ -361,7 +361,7 @@ class html_tv_generator
                     $subs_string,
                     $imdb_link,
                     $ep['date_scanned']
-                ));
+                ), $ep['status']);
                 $displayed_count++;
             }
             $processed_count++;
@@ -376,9 +376,9 @@ class html_tv_generator
         return ceil(count($this->_ep_list) / $this->_settings->get("limit"));
     }
 
-    private function _generate_table_row($col_data)
+    private function _generate_table_row($col_data, $status)
     {
-        $ret = "\r\n<tr class=\"status_ok\">";
+        $ret = "\r\n<tr class=\"status_{$status}\">";
         foreach ($col_data as $data) {
             $ret .= "\r\n<td>{$data}</td>";
         }
