@@ -256,7 +256,7 @@ class html_tv_generator
         $this->_settings = new setting();
         $this->_filter_db();
         $this->_titles = array(
-            "Show", "Episode", "Title", "File", "Imdb", "Added");
+            "Show", "Episode", "Title", "File", "Srt", "Imdb", "Added");
     }
 
     private function _filter_db()
@@ -338,12 +338,18 @@ class html_tv_generator
         $processed_count = 0;
         $start_at = ($this->_settings->get("page") - 1) * $this->_settings->get("limit");
 
-        //"Show", "Episode", "Title", "File", "Imdb", "Added");
+        //"Show", "Episode", "Title", "File", "Srt", "Imdb", "Added");
         foreach($this->_ep_list as $ep) {
             if($processed_count >= $start_at) {
                 $imdb = $ep['omdb'] ? $ep['omdb']['imdbID'] : "";
                 $imdb_link =
                     "<a href=\"http://www.imdb.com/title/{$imdb}\">{$imdb}</a>";
+
+                $subs_string = "";
+                $subs_dict = $ep["subs"];
+                $subs_string .= $subs_dict["sv"] ? "sv" : "";
+                $subs_string .= ($subs_dict["sv"] && $subs_dict["en"] ? " | " : "")
+                    . ($subs_dict["en"] ? "en" : "");
 
                 $show_link = $this->_gen_link($ep['show'], array('show' => $ep['show']));
 
@@ -352,6 +358,7 @@ class html_tv_generator
                     $ep['se'],
                     $ep['omdb'] ? $ep['omdb']['Title'] : "N/A",
                     $ep['file'],
+                    $subs_string,
                     $imdb_link,
                     $ep['date_scanned']
                 ));
