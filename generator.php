@@ -192,8 +192,14 @@ class html_mov_generator
         foreach ($this->_db_filtered_keys as $mov) {
             if($processed_count >= $start_at) {
                 $show_data = true;
-                $date = DateTime::createFromFormat('j M Y',
-                    $this->_db->data($mov, "date_scanned"));
+
+                if(strpos($this->_db->data($mov, "date_scanned"), ":") !== false){
+                    $date = DateTime::createFromFormat('j M Y H:i',
+                        $this->_db->data($mov, "date_scanned"));
+                } else {
+                    $date = DateTime::createFromFormat('j M Y',
+                        $this->_db->data($mov, "date_scanned"));
+                }
 
                 $imdb = $this->_db->data($mov, "imdb");
                 $imdb_link =
@@ -353,6 +359,12 @@ class html_tv_generator
 
                 $show_link = $this->_gen_link($ep['show'], array('show' => $ep['show']));
 
+                if(strpos($ep['date_scanned'], ":") !== false){
+                    $date = DateTime::createFromFormat('j M Y H:i', $ep['date_scanned']);
+                } else {
+                    $date = DateTime::createFromFormat('j M Y', $ep['date_scanned']);
+                }
+
                 $str .= $this->_generate_table_row(array(
                     $show_link,
                     $ep['se'],
@@ -360,7 +372,7 @@ class html_tv_generator
                     $ep['file'],
                     $subs_string,
                     $imdb_link,
-                    $ep['date_scanned']
+                    $date->format('Y-m-d')
                 ), $ep['status']);
                 $displayed_count++;
             }
