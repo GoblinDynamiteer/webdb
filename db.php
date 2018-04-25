@@ -130,8 +130,17 @@
         /* Sort by added date, helper function */
         private function _sort_by_added($a, $b)
         {
-            $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
-            $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
+            if(strpos($a['date_scanned'], ":") !== false) {
+                $adate = DateTime::createFromFormat('j M Y H:i', $a['date_scanned']);
+            } else {
+                $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
+            }
+
+            if(strpos($b['date_scanned'], ":") !== false) {
+                $bdate = DateTime::createFromFormat('j M Y H:i', $b['date_scanned']);
+            } else {
+                $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
+            }
 
             if($this->sorting_order == "az")
             {
@@ -280,8 +289,17 @@
         /* Sort by added date, helper function */
         private function _sort_by_added($a, $b)
         {
-            $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
-            $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
+            if(strpos($a['date_scanned'], ":") !== false) {
+                $adate = DateTime::createFromFormat('j M Y H:i', $a['date_scanned']);
+            } else {
+                $adate = DateTime::createFromFormat('j M Y', $a['date_scanned']);
+            }
+
+            if(strpos($b['date_scanned'], ":") !== false) {
+                $bdate = DateTime::createFromFormat('j M Y H:i', $b['date_scanned']);
+            } else {
+                $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
+            }
 
             if($this->sorting_order == "az")
             {
