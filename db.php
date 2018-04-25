@@ -301,6 +301,10 @@
                 $bdate = DateTime::createFromFormat('j M Y', $b['date_scanned']);
             }
 
+            if($bdate == $adate){
+                return $this->_sort_by_show($a, $b);
+            }
+
             if($this->sorting_order == "az")
             {
                 return ($adate > $bdate);
