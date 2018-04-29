@@ -262,7 +262,7 @@ class html_tv_generator
         $this->_settings = new setting();
         $this->_filter_db();
         $this->_titles = array(
-            "Show", "Episode", "Title", "File", "Srt", "Imdb", "Added");
+            "Show", "Episode", "Title", "File", "Srt", "Imdb", "TVMaze", "Added");
     }
 
     private function _filter_db()
@@ -344,12 +344,17 @@ class html_tv_generator
         $processed_count = 0;
         $start_at = ($this->_settings->get("page") - 1) * $this->_settings->get("limit");
 
-        //"Show", "Episode", "Title", "File", "Srt", "Imdb", "Added");
+        //"Show", "Episode", "Title", "File", "Srt", "Imdb", "TVMaze", "Added");
         foreach($this->_ep_list as $ep) {
             if($processed_count >= $start_at) {
                 $imdb = $ep['omdb'] ? $ep['omdb']['imdbID'] : "";
                 $imdb_link =
                     "<a href=\"http://www.imdb.com/title/{$imdb}\">{$imdb}</a>";
+
+                $tvmaze_id = $ep['tvmaze'] ? $ep['tvmaze']['id'] : "";
+                $tvmaze_url = $ep['tvmaze'] ? $ep['tvmaze']['url'] : "";
+                $maze_link =
+                    "<a href=\"{$tvmaze_url}\">{$tvmaze_id}</a>";
 
                 $subs_string = "";
                 $subs_dict = $ep["subs"];
@@ -358,6 +363,10 @@ class html_tv_generator
                     . ($subs_dict["en"] ? "en" : "");
 
                 $show_link = $this->_gen_link($ep['show'], array('show' => $ep['show']));
+                $show_title_omdb = $ep['omdb'] ? $ep['omdb']['Title'] : "N/A";
+                $show_title_tvmaze = $ep['tvmaze'] ? $ep['tvmaze']['name'] : "N/A";
+
+                $show_title = $show_title_tvmaze == "N/A" ? $show_title_omdb : $show_title_tvmaze;
 
                 if(strpos($ep['date_scanned'], ":") !== false){
                     $date = DateTime::createFromFormat('j M Y H:i', $ep['date_scanned']);
@@ -368,10 +377,11 @@ class html_tv_generator
                 $str .= $this->_generate_table_row(array(
                     $show_link,
                     $ep['se'],
-                    $ep['omdb'] ? $ep['omdb']['Title'] : "N/A",
+                    $show_title,
                     $ep['file'],
                     $subs_string,
                     $imdb_link,
+                    $maze_link,
                     $date->format('Y-m-d')
                 ), $ep['status']);
                 $displayed_count++;
